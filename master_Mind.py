@@ -4,12 +4,22 @@
 # v1.01
 # 15-8-2024
 # Last mod by DevJan : added loop for replay
-print("MasterMind")
-
 import random
 
-def generate_Code(length=4, digits=6):
-    return [str(random.randint(1, digits)) for _ in range(length)]
+print("MasterMind")
+
+COLORS = {
+    "R": "Rood",
+    "G": "Groen",
+    "B": "Blauw",
+    "Y": "Geel",
+    "O": "Oranje",
+    "P": "Paars",
+}
+
+
+def generate_Code(length=4):
+    return [random.choice(list(COLORS.keys())) for _ in range(length)]
 
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
