@@ -21,6 +21,29 @@ COLORS = {
 def generate_Code(length=4):
     return [random.choice(list(COLORS.keys())) for _ in range(length)]
 
+
+def parse_Guess(raw_guess):
+    cleaned_guess = raw_guess.strip().upper()
+
+    if len(cleaned_guess) == 4 and all(c in COLORS for c in cleaned_guess):
+        return list(cleaned_guess)
+
+    color_names = {name.upper(): code for code, name in COLORS.items()}
+    parts = cleaned_guess.replace(",", " ").split()
+    if len(parts) != 4:
+        return None
+
+    guess = []
+    for part in parts:
+        if part in COLORS:
+            guess.append(part)
+        elif part in color_names:
+            guess.append(color_names[part])
+        else:
+            return None
+
+    return guess
+
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
     
@@ -50,11 +73,12 @@ def play_Mastermind():
         guess = ""
         valid_Guess = False
         while not valid_Guess:
-            guess = input(f"Attempt {attempt}: ").strip()
-            valid_Guess = len(guess) == 4 and all(c in "123456" for c in guess)
+            raw_Guess = input(f"Attempt {attempt}: ")
+            guess = parse_Guess(raw_Guess)
+            valid_Guess = guess is not None
             if not valid_Guess:
                 print("Invalid input. Enter 4 digits, each from 1 to 6.")
-            show_Secret(secret_Code) if guess == "cheat" else False
+            show_Secret(secret_Code) if raw_Guess == "cheat" else False
 
         black, white = get_Feedback(secret_Code, guess)
         print(f"Black pegs (correct position): {black}, White pegs (wrong position): {white}")
