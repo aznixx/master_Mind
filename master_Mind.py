@@ -44,6 +44,10 @@ def parse_Guess(raw_guess):
 
     return guess
 
+
+def format_Code(code):
+    return " ".join(COLORS[color] for color in code)
+
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
     
@@ -64,8 +68,12 @@ def show_Secret(mystery):
     print(mystery)
 
 def play_Mastermind():
-    print("Welcome to Mastermind!")
-    print("Guess the 4-digit code. Each digit is from 1 to 6. You have 10 attempts.")
+    print("Welkom bij MasterMind!")
+    print("Raad de 4-kleurige code.")
+    print("Beschikbare kleuren: " + ", ".join(
+        f"{code}={name}" for code, name in COLORS.items()
+    ))
+    print("Je hebt 10 pogingen.")
     secret_Code = generate_Code()
     attempts = 10
 
@@ -73,25 +81,26 @@ def play_Mastermind():
         guess = ""
         valid_Guess = False
         while not valid_Guess:
-            raw_Guess = input(f"Attempt {attempt}: ")
+            raw_Guess = input(f"Poging {attempt}: ")
             guess = parse_Guess(raw_Guess)
             valid_Guess = guess is not None
             if not valid_Guess:
-                print("Invalid input. Enter 4 digits, each from 1 to 6.")
+                print("Ongeldige invoer. Voer 4 kleuren in, bijvoorbeeld: R G B Y.")
             show_Secret(secret_Code) if raw_Guess == "cheat" else False
 
         black, white = get_Feedback(secret_Code, guess)
-        print(f"Black pegs (correct position): {black}, White pegs (wrong position): {white}")
+        print(f"Zwarte pegs (juiste kleur en plek): {black}, "
+              f"Witte pegs (juiste kleur, verkeerde plek): {white}")
 
         if black == 4:
-            print(f"Congratulations! You guessed the code: {''.join(secret_Code)}")
+            print(f"Gefeliciteerd! De code was: {format_Code(secret_Code)}")
             return
 
-    print(f"Sorry, you've used all attempts. The correct code was: {''.join(secret_Code)}")
+    print(f"Helaas, je pogingen zijn op. De code was: {format_Code(secret_Code)}")
 
 if __name__ == "__main__":
     again = 'Y'
     while again == 'Y' :
         play_Mastermind()
-        again  = input (f"Play again (Y/N) ?").upper()
+        again = input("Nog een keer spelen (Y/N)? ").strip().upper()
 
