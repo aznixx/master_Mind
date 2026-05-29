@@ -64,9 +64,6 @@ def get_Feedback(secret, guess):
     
     return black_Pegs, white_Pegs
 
-def show_Secret(mystery):
-    print(mystery)
-
 def play_Mastermind():
     print("Welkom bij MasterMind!")
     print("Raad de 4-kleurige code.")
@@ -86,7 +83,6 @@ def play_Mastermind():
             valid_Guess = guess is not None
             if not valid_Guess:
                 print("Ongeldige invoer. Voer 4 kleuren in, bijvoorbeeld: R G B Y.")
-            show_Secret(secret_Code) if raw_Guess == "cheat" else False
 
         black, white = get_Feedback(secret_Code, guess)
         print(f"Zwarte pegs (juiste kleur en plek): {black}, "
