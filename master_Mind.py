@@ -5,6 +5,7 @@
 # 15-8-2024
 # Last mod by DevJan : added loop for replay
 import random
+import sys
 
 print("MasterMind")
 
@@ -94,9 +95,18 @@ def play_Mastermind():
 
     print(f"Helaas, je pogingen zijn op. De code was: {format_Code(secret_Code)}")
 
+
+def run_Tests():
+    assert "show_Secret" not in globals()
+    assert parse_Guess("cheat") is None
+    print("Backdoor-tests geslaagd.")
+
 if __name__ == "__main__":
-    again = 'Y'
-    while again == 'Y' :
-        play_Mastermind()
-        again = input("Nog een keer spelen (Y/N)? ").strip().upper()
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        run_Tests()
+    else:
+        again = 'Y'
+        while again == 'Y' :
+            play_Mastermind()
+            again = input("Nog een keer spelen (Y/N)? ").strip().upper()
 
