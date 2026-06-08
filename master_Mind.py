@@ -99,7 +99,10 @@ def play_Mastermind():
 def run_Tests():
     assert "show_Secret" not in globals()
     assert parse_Guess("cheat") is None
-    print("Backdoor-tests geslaagd.")
+    assert get_Feedback(["R", "G", "B", "Y"], ["R", "G", "B", "Y"]) == (4, 0)
+    assert get_Feedback(["R", "G", "B", "Y"], ["Y", "B", "G", "R"]) == (0, 4)
+    assert get_Feedback(["R", "R", "G", "B"], ["R", "G", "R", "O"]) == (1, 2)
+    print("Tests voor backdoor en get_Feedback geslaagd.")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
