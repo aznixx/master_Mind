@@ -102,7 +102,16 @@ def run_Tests():
     assert get_Feedback(["R", "G", "B", "Y"], ["R", "G", "B", "Y"]) == (4, 0)
     assert get_Feedback(["R", "G", "B", "Y"], ["Y", "B", "G", "R"]) == (0, 4)
     assert get_Feedback(["R", "R", "G", "B"], ["R", "G", "R", "O"]) == (1, 2)
-    print("Tests voor backdoor en get_Feedback geslaagd.")
+    assert parse_Guess("RGBY") == ["R", "G", "B", "Y"]
+    assert parse_Guess("R G B Y") == ["R", "G", "B", "Y"]
+    assert parse_Guess("rood groen blauw geel") == ["R", "G", "B", "Y"]
+    assert parse_Guess("R G B") is None
+
+    generated_Code = generate_Code()
+    assert len(generated_Code) == 4
+    assert all(color in COLORS for color in generated_Code)
+
+    print("Alle tests geslaagd.")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
