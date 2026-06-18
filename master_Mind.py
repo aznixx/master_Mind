@@ -7,8 +7,6 @@
 import random
 import sys
 
-print("MasterMind")
-
 COLORS = {
     "R": "Rood",
     "G": "Groen",
@@ -66,6 +64,7 @@ def get_Feedback(secret, guess):
     return black_Pegs, white_Pegs
 
 def play_Mastermind():
+    print("MasterMind")
     print("Welkom bij MasterMind!")
     print("Raad de 4-kleurige code.")
     print("Beschikbare kleuren: " + ", ".join(
