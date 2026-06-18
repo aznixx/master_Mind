@@ -47,10 +47,11 @@ def parse_Guess(raw_guess):
 def format_Code(code):
     return " ".join(COLORS[color] for color in code)
 
+
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
-    
-    # Count whites by subtracting black and calculating min digit frequency match
+
+    # Count whites by comparing unmatched color frequencies.
     secret_Counts = {}
     guess_Counts = {}
 
@@ -59,9 +60,13 @@ def get_Feedback(secret, guess):
             secret_Counts[s] = secret_Counts.get(s, 0) + 1
             guess_Counts[g] = guess_Counts.get(g, 0) + 1
 
-    white_Pegs = sum(min(secret_Counts.get(d, 0), guess_Counts.get(d, 0)) for d in guess_Counts)
-    
+    white_Pegs = sum(
+        min(secret_Counts.get(d, 0), guess_Counts.get(d, 0))
+        for d in guess_Counts
+    )
+
     return black_Pegs, white_Pegs
+
 
 def play_Mastermind():
     print("MasterMind")
@@ -82,7 +87,8 @@ def play_Mastermind():
             guess = parse_Guess(raw_Guess)
             valid_Guess = guess is not None
             if not valid_Guess:
-                print("Ongeldige invoer. Voer 4 kleuren in, bijvoorbeeld: R G B Y.")
+                print("Ongeldige invoer. Voer 4 kleuren in, "
+                      "bijvoorbeeld: R G B Y.")
 
         black, white = get_Feedback(secret_Code, guess)
         print(f"Zwarte pegs (juiste kleur en plek): {black}, "
@@ -92,15 +98,22 @@ def play_Mastermind():
             print(f"Gefeliciteerd! De code was: {format_Code(secret_Code)}")
             return
 
-    print(f"Helaas, je pogingen zijn op. De code was: {format_Code(secret_Code)}")
+    print("Helaas, je pogingen zijn op. "
+          f"De code was: {format_Code(secret_Code)}")
 
 
 def run_Tests():
     assert "show_Secret" not in globals()
     assert parse_Guess("cheat") is None
-    assert get_Feedback(["R", "G", "B", "Y"], ["R", "G", "B", "Y"]) == (4, 0)
-    assert get_Feedback(["R", "G", "B", "Y"], ["Y", "B", "G", "R"]) == (0, 4)
-    assert get_Feedback(["R", "R", "G", "B"], ["R", "G", "R", "O"]) == (1, 2)
+    assert get_Feedback(
+        ["R", "G", "B", "Y"], ["R", "G", "B", "Y"]
+    ) == (4, 0)
+    assert get_Feedback(
+        ["R", "G", "B", "Y"], ["Y", "B", "G", "R"]
+    ) == (0, 4)
+    assert get_Feedback(
+        ["R", "R", "G", "B"], ["R", "G", "R", "O"]
+    ) == (1, 2)
     assert parse_Guess("RGBY") == ["R", "G", "B", "Y"]
     assert parse_Guess("R G B Y") == ["R", "G", "B", "Y"]
     assert parse_Guess("rood groen blauw geel") == ["R", "G", "B", "Y"]
@@ -112,12 +125,12 @@ def run_Tests():
 
     print("Alle tests geslaagd.")
 
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
         run_Tests()
     else:
         again = 'Y'
-        while again == 'Y' :
+        while again == 'Y':
             play_Mastermind()
             again = input("Nog een keer spelen (Y/N)? ").strip().upper()
-
