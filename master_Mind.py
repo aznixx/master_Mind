@@ -5,7 +5,6 @@
 # 15-8-2024
 # Last mod by DevJan : added loop for replay
 import random
-import sys
 
 COLORS = {
     "R": "Rood",
@@ -16,19 +15,20 @@ COLORS = {
     "P": "Paars",
 }
 
+COLOR_NAMES = {name.upper(): code for code, name in COLORS.items()}
+
 
 def generate_Code(length=4):
     return [random.choice(list(COLORS.keys())) for _ in range(length)]
 
 
 def parse_Guess(raw_guess):
-    cleaned_guess = raw_guess.strip().upper()
+    cleaned_guess = raw_guess.strip().upper().replace(",", " ")
+    parts = cleaned_guess.split()
 
-    if len(cleaned_guess) == 4 and all(c in COLORS for c in cleaned_guess):
-        return list(cleaned_guess)
+    if len(parts) == 1 and len(parts[0]) == 4:
+        parts = list(parts[0])
 
-    color_names = {name.upper(): code for code, name in COLORS.items()}
-    parts = cleaned_guess.replace(",", " ").split()
     if len(parts) != 4:
         return None
 
@@ -36,8 +36,8 @@ def parse_Guess(raw_guess):
     for part in parts:
         if part in COLORS:
             guess.append(part)
-        elif part in color_names:
-            guess.append(color_names[part])
+        elif part in COLOR_NAMES:
+            guess.append(COLOR_NAMES[part])
         else:
             return None
 
@@ -102,35 +102,8 @@ def play_Mastermind():
           f"De code was: {format_Code(secret_Code)}")
 
 
-def run_Tests():
-    assert "show_Secret" not in globals()
-    assert parse_Guess("cheat") is None
-    assert get_Feedback(
-        ["R", "G", "B", "Y"], ["R", "G", "B", "Y"]
-    ) == (4, 0)
-    assert get_Feedback(
-        ["R", "G", "B", "Y"], ["Y", "B", "G", "R"]
-    ) == (0, 4)
-    assert get_Feedback(
-        ["R", "R", "G", "B"], ["R", "G", "R", "O"]
-    ) == (1, 2)
-    assert parse_Guess("RGBY") == ["R", "G", "B", "Y"]
-    assert parse_Guess("R G B Y") == ["R", "G", "B", "Y"]
-    assert parse_Guess("rood groen blauw geel") == ["R", "G", "B", "Y"]
-    assert parse_Guess("R G B") is None
-
-    generated_Code = generate_Code()
-    assert len(generated_Code) == 4
-    assert all(color in COLORS for color in generated_Code)
-
-    print("Alle tests geslaagd.")
-
-
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "--test":
-        run_Tests()
-    else:
-        again = 'Y'
-        while again == 'Y':
-            play_Mastermind()
-            again = input("Nog een keer spelen (Y/N)? ").strip().upper()
+    again = "Y"
+    while again == "Y":
+        play_Mastermind()
+        again = input("Nog een keer spelen (Y/N)? ").strip().upper()

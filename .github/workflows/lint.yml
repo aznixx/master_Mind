@@ -23,17 +23,17 @@ jobs:
           python -m pip install flake8
 
       - name: Check Python syntax
-        run: python -m py_compile master_Mind.py
+        run: python -m py_compile master_Mind.py test_master_Mind.py
 
       - name: Run flake8
         run: |
           mkdir -p test-results
-          flake8 master_Mind.py --tee --output-file=test-results/flake8-report.txt
+          flake8 master_Mind.py test_master_Mind.py --tee --output-file=test-results/flake8-report.txt
 
       - name: Run tests
         run: |
           mkdir -p test-results
-          python master_Mind.py --test | tee test-results/test-report.txt
+          python test_master_Mind.py | tee test-results/test-report.txt
 
       - name: Upload reports
         if: always()
