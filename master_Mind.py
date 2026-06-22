@@ -55,11 +55,29 @@ def is_Admin_Password(password):
     return bool(admin_Password) and password == admin_Password
 
 
+def load_Admin_Settings(env_File=".env"):
+    if os.getenv(ADMIN_PASSWORD_ENV) or not os.path.exists(env_File):
+        return
+
+    with open(env_File, encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            if key.strip() == ADMIN_PASSWORD_ENV:
+                os.environ[ADMIN_PASSWORD_ENV] = value.strip().strip("'\"")
+                return
+
+
 def is_Admin_Command(raw_Guess):
     return raw_Guess.strip().lower() in ("a", "admin")
 
 
 def admin_Menu(secret_Code):
+    load_Admin_Settings()
+
     if not os.getenv(ADMIN_PASSWORD_ENV):
         print("Admin is niet ingesteld.")
         return

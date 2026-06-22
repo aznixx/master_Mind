@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import master_Mind as game
 
@@ -10,6 +11,7 @@ def test_Backdoor_Removed():
 
 def test_Admin_Check():
     old_Password = os.environ.get(game.ADMIN_PASSWORD_ENV)
+    env_File = None
 
     try:
         assert game.is_Admin_Command("A")
@@ -22,7 +24,18 @@ def test_Admin_Check():
         os.environ[game.ADMIN_PASSWORD_ENV] = "test"
         assert game.is_Admin_Password("test")
         assert not game.is_Admin_Password("wrong")
+
+        os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
+        with tempfile.NamedTemporaryFile("w", delete=False) as file:
+            file.write(f"{game.ADMIN_PASSWORD_ENV}=filetest\n")
+            env_File = file.name
+
+        game.load_Admin_Settings(env_File)
+        assert game.is_Admin_Password("filetest")
     finally:
+        if env_File and os.path.exists(env_File):
+            os.remove(env_File)
+
         if old_Password is None:
             os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
         else:
