@@ -1,9 +1,28 @@
+import os
+
 import master_Mind as game
 
 
 def test_Backdoor_Removed():
     assert not hasattr(game, "show_Secret")
     assert game.parse_Guess("cheat") is None
+
+
+def test_Admin_Check():
+    old_Password = os.environ.get(game.ADMIN_PASSWORD_ENV)
+
+    try:
+        os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
+        assert not game.is_Admin_Password("test")
+
+        os.environ[game.ADMIN_PASSWORD_ENV] = "test"
+        assert game.is_Admin_Password("test")
+        assert not game.is_Admin_Password("wrong")
+    finally:
+        if old_Password is None:
+            os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
+        else:
+            os.environ[game.ADMIN_PASSWORD_ENV] = old_Password
 
 
 def test_Get_Feedback():
@@ -35,6 +54,7 @@ def test_Generate_Code():
 
 def run_Tests():
     test_Backdoor_Removed()
+    test_Admin_Check()
     test_Get_Feedback()
     test_Parse_Guess()
     test_Generate_Code()

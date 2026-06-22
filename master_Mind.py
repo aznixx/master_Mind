@@ -4,6 +4,7 @@
 # v1.01
 # 15-8-2024
 # Last mod by DevJan : added loop for replay
+import os
 import random
 
 COLORS = {
@@ -15,6 +16,7 @@ COLORS = {
     "P": "Paars",
 }
 
+ADMIN_PASSWORD_ENV = "MASTERMIND_ADMIN_PASSWORD"
 COLOR_NAMES = {name.upper(): code for code, name in COLORS.items()}
 
 
@@ -46,6 +48,23 @@ def parse_Guess(raw_guess):
 
 def format_Code(code):
     return " ".join(COLORS[color] for color in code)
+
+
+def is_Admin_Password(password):
+    admin_Password = os.getenv(ADMIN_PASSWORD_ENV)
+    return bool(admin_Password) and password == admin_Password
+
+
+def admin_Menu(secret_Code):
+    if not os.getenv(ADMIN_PASSWORD_ENV):
+        print("Admin is niet ingesteld.")
+        return
+
+    password = input("Admin wachtwoord: ")
+    if is_Admin_Password(password):
+        print(f"Geheime code: {format_Code(secret_Code)}")
+    else:
+        print("Verkeerd wachtwoord.")
 
 
 def get_Feedback(secret, guess):
@@ -84,6 +103,10 @@ def play_Mastermind():
         valid_Guess = False
         while not valid_Guess:
             raw_Guess = input(f"Poging {attempt}: ")
+            if raw_Guess.strip().lower() == "admin":
+                admin_Menu(secret_Code)
+                continue
+
             guess = parse_Guess(raw_Guess)
             valid_Guess = guess is not None
             if not valid_Guess:
