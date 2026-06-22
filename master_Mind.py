@@ -55,6 +55,10 @@ def is_Admin_Password(password):
     return bool(admin_Password) and password == admin_Password
 
 
+def is_Admin_Command(raw_Guess):
+    return raw_Guess.strip().lower() in ("a", "admin")
+
+
 def admin_Menu(secret_Code):
     if not os.getenv(ADMIN_PASSWORD_ENV):
         print("Admin is niet ingesteld.")
@@ -102,8 +106,8 @@ def play_Mastermind():
         guess = ""
         valid_Guess = False
         while not valid_Guess:
-            raw_Guess = input(f"Poging {attempt}: ")
-            if raw_Guess.strip().lower() == "admin":
+            raw_Guess = input(f"Poging {attempt} (A=admin): ")
+            if is_Admin_Command(raw_Guess):
                 admin_Menu(secret_Code)
                 continue
 

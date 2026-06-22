@@ -12,6 +12,10 @@ def test_Admin_Check():
     old_Password = os.environ.get(game.ADMIN_PASSWORD_ENV)
 
     try:
+        assert game.is_Admin_Command("A")
+        assert game.is_Admin_Command("admin")
+        assert not game.is_Admin_Command("cheat")
+
         os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
         assert not game.is_Admin_Password("test")
 
