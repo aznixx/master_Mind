@@ -19,19 +19,17 @@ def test_Admin_Check():
         assert not game.is_Admin_Command("cheat")
 
         os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
-        assert not game.is_Admin_Password("test")
+        assert game.get_Admin_Password("geen-bestand.env") is None
 
         os.environ[game.ADMIN_PASSWORD_ENV] = "test"
-        assert game.is_Admin_Password("test")
-        assert not game.is_Admin_Password("wrong")
+        assert game.get_Admin_Password() == "test"
 
         os.environ.pop(game.ADMIN_PASSWORD_ENV, None)
         with tempfile.NamedTemporaryFile("w", delete=False) as file:
             file.write(f"{game.ADMIN_PASSWORD_ENV}=filetest\n")
             env_File = file.name
 
-        game.load_Admin_Settings(env_File)
-        assert game.is_Admin_Password("filetest")
+        assert game.get_Admin_Password(env_File) == "filetest"
     finally:
         if env_File and os.path.exists(env_File):
             os.remove(env_File)

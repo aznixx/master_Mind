@@ -50,25 +50,20 @@ def format_Code(code):
     return " ".join(COLORS[color] for color in code)
 
 
-def is_Admin_Password(password):
+def get_Admin_Password(env_File=".env"):
     admin_Password = os.getenv(ADMIN_PASSWORD_ENV)
-    return bool(admin_Password) and password == admin_Password
+    if admin_Password:
+        return admin_Password
 
+    try:
+        with open(env_File, encoding="utf-8") as file:
+            for line in file:
+                if line.startswith(ADMIN_PASSWORD_ENV + "="):
+                    return line.split("=", 1)[1].strip().strip("'\"")
+    except FileNotFoundError:
+        return None
 
-def load_Admin_Settings(env_File=".env"):
-    if os.getenv(ADMIN_PASSWORD_ENV) or not os.path.exists(env_File):
-        return
-
-    with open(env_File, encoding="utf-8") as file:
-        for line in file:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-
-            key, value = line.split("=", 1)
-            if key.strip() == ADMIN_PASSWORD_ENV:
-                os.environ[ADMIN_PASSWORD_ENV] = value.strip().strip("'\"")
-                return
+    return None
 
 
 def is_Admin_Command(raw_Guess):
@@ -76,14 +71,14 @@ def is_Admin_Command(raw_Guess):
 
 
 def admin_Menu(secret_Code):
-    load_Admin_Settings()
+    admin_Password = get_Admin_Password()
 
-    if not os.getenv(ADMIN_PASSWORD_ENV):
+    if not admin_Password:
         print("Admin is niet ingesteld.")
         return
 
     password = input("Admin wachtwoord: ")
-    if is_Admin_Password(password):
+    if password == admin_Password:
         print(f"Geheime code: {format_Code(secret_Code)}")
     else:
         print("Verkeerd wachtwoord.")
