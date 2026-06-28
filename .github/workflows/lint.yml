@@ -20,20 +20,20 @@ jobs:
       - name: Install lint tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install flake8
+          python -m pip install flake8 pep8-naming
 
       - name: Check Python syntax
         run: python -m py_compile master_Mind.py test_master_Mind.py
-
-      - name: Run flake8
-        run: |
-          mkdir -p test-results
-          flake8 master_Mind.py test_master_Mind.py --tee --output-file=test-results/flake8-report.txt
 
       - name: Run tests
         run: |
           mkdir -p test-results
           python test_master_Mind.py | tee test-results/test-report.txt
+
+      - name: Run flake8 PEP8 report
+        run: |
+          mkdir -p test-results
+          flake8 master_Mind.py test_master_Mind.py --tee --output-file=test-results/flake8-report.txt
 
       - name: Upload reports
         if: always()
